@@ -19,7 +19,7 @@ PROUNOUNCIATION={"ā":"ay","â":"a","b":"b","d":"d","ē":"ee","ê":"e",
                  "ə":"u","f":"f","g":"g","h":"h","ī":"iy","î":"i",
                  "j":"j","ʒ":"zh","k":"k","l":"l","m":"m","n":"n",
                  "ñ":"ny","ō":"oh","ô":"o","ó":"oo","p":"p","r":"r",
-                 "ᵲ":"rr","s":"s","t":"t","ū":"oo","û":"u","v":"v",
+                 "ᵲ":"rr","s":"s","t":"t","ū":"yoo","û":"u","v":"v",
                  "w":"w","y":"yu","z":"z","ʧ":"ch","ʃ":"sh","θ":"th",
                  "ð":"edh","ʊ":"eauh"}
 SUBS={"":"sk","▀":"sl","▁":"sn","▂":"st","▃":"sp","▄":"sm",
@@ -145,6 +145,11 @@ def to_galbraithanese(word):
 
 class Translation:
     def __init__(self):
+        if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py").read():
+            i=raw_input("Your code is not up to date!\nWould you like to download the new one?\n(y/n)")
+            if i=="y":
+                urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newcode.py")
+                print "Your new code has been downloaded.  Just delete this code rename your Newcode.py to galbraithanese_word.py and run that."
         self.words=open("/usr/share/dict/words")
         try:
             self.trans=open("Translation.txt", "r+")
@@ -153,9 +158,8 @@ class Translation:
             self.trans=open("Translation.txt", "r+")
         self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
         self.dictionary={}
-        #try:
-        self.readfromdoc()
-        """
+        try:
+            self.readfromdoc()
         except ValueError:
             warnings.warn("Could not read from doc!")
             for word in map(lambda x: x[:-1], self.trans.readlines()):
@@ -163,9 +167,6 @@ class Translation:
                     self.dictionary[word.split("-")[0]]=word.split("-")[1]
                 except:
                     pass
-        finally:
-            warnings.warn("Critical Error!")
-        """
 
 
     
@@ -173,8 +174,8 @@ class Translation:
         print self.getword(word)
         
     def getword(self, word):
-        if all(map(lambda x: x.isdigit(), list(word))):
-            return Numbers.to_galbraithanese(int(word))
+        if all(map(lambda x: x.isdigit(), list(word))) and word:
+            return Numbers.galbraithanese_number(int(word))
         elif word=="love":
             return random.choice([self.dictionary[word], "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"])
         else:
