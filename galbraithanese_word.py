@@ -15,17 +15,16 @@ except:
 present="\x68\x74\x74\x70\x3A\x2F\x2F\x75\x6E\x69\x63\x6F\x64\x65\x73\x6E\x6F\x77\x6D\x61\x6E\x66\x6F\x72\x79\x6F\x75\x2E\x63\x6F\x6D"
 
 
-PROUNOUNCIATION={"ā":"ay","â":"a","b":"b","d":"d","ē":"ee","ê":"e",
-                 "ə":"u","f":"f","g":"g","h":"h","ī":"iy","î":"i",
-                 "j":"j","ʒ":"zh","k":"k","l":"l","m":"m","n":"n",
-                 "ñ":"ny","ō":"oh","ô":"o","ó":"oo","p":"p","r":"r",
-                 "ᵲ":"rr","s":"s","t":"t","ū":"yoo","û":"u","v":"v",
-                 "w":"w","y":"yu","z":"z","ʧ":"ch","ʃ":"sh","θ":"th",
-                 "ð":"edh","ʊ":"eauh"}
-SUBS={"":"sk","▀":"sl","▁":"sn","▂":"st","▃":"sp","▄":"sm",
-          "▅":"bl","▆":"pl","▇":"kl","█":"br","▉":"fr","▊":"kr",
-          "▋":"gl","▌":"pl","▍":"gr","▎":"tr","▏":"pr","▐":"kw",
-          "▓":"ks"}                
+PROUNOUNCIATION={u"ā":"ay",u"â":"a",u"b":"b",u"d":"d",u"ē":"ee",u"ê":"e",
+                 u"ə":"u",u"f":"f",u"g":"g",u"h":"h",u"ī":"iy",u"î":"i",
+                 u"j":"j",u"ʒ":"zh",u"k":"k",u"l":"l",u"m":"m",u"n":"n",
+                 u"ñ":"ny",u"ō":"oh",u"ô":"o",u"ó":"oo",u"p":"p",u"r":"r",
+                 u"ᵲ":"rr",u"s":"s",u"t":"t",u"ū":"yoo",u"û":"u",u"v":"v",
+                 u"w":"w",u"y":"yu",u"z":"z",u"ʧ":"ch",u"ʃ":"sh",u"θ":"th",
+                 u"ð":"edh",u"ʊ":"eauh"}
+SUBS={u"":"sk",u"▀":"sl",u"▁":"sn",u"▂":"st",u"▃":"sp",u"▄":"sm",
+          u"▅":"bl",u"▇":"kl",u"█":"br",u"▉":"fr",u"▊":"kr",u"▋":"gl",
+          u"▌":u"pl",u"▍":"gr",u"▎":"tr",u"▏":"pr",u"▐":"kw",u"▓":"ks"}                
 
 VOWELS=u"āâēêəīîōôóūûʊ"  # 13
 CONS=u"bdfghjklmnprstvwyzʒᵲʧñʃθð"  # 26
@@ -34,10 +33,7 @@ CONS=u"bdfghjklmnprstvwyzʒᵲʧñʃθð"  # 26
 def to_galbraithanese(word):
     VOWELS=u"āâēêəīîōôóūûʊ"
     CONS=u"bdfghjklmnprstvwyzʒᵲʧñʃθð1234567890`!@#$%^~|"
-    SUBS={"!":"sk","`":"sl","#":"sn","%":"st","$":"sp","@":"sm",
-          "1":"bl","0":"pl","3":"kl","2":"br","5":"fr","4":"kr",
-          "7":"gl","6":"pl","9":"gr","8":"tr","^":"pr","~":"kw",
-          "|":"ks"}
+    global SUBS
     try:
         word=unicode(word.lower())
     except:
@@ -145,11 +141,14 @@ def to_galbraithanese(word):
 
 class Translation:
     def __init__(self):
-        if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/galbraithanese_word.py").read():
-            i=raw_input("Your code is not up to date!\nWould you like to download the new one?\n(y/n)")
-            if i=="y":
-                urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newcode.py")
-                print "Your new code has been downloaded.  Just delete this code rename your Newcode.py to galbraithanese_word.py and run that."
+        try:
+            open("ignore.txt")
+        except:
+            if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/galbraithanese_word.py").read():
+                i=raw_input("Your code is not up to date!\nWould you like to download the new one?\n(y/n)")
+                if i=="y":
+                    urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newcode.py")
+                    print "Your new code has been downloaded.  Just delete this code rename your Newcode.py to galbraithanese_word.py and run that."
         self.words=open("/usr/share/dict/words")
         try:
             self.trans=open("Translation.txt", "r+")
@@ -176,6 +175,8 @@ class Translation:
     def getword(self, word):
         if all(map(lambda x: x.isdigit(), list(word))) and word:
             return Numbers.galbraithanese_number(int(word))
+        elif set(list(word))==set(['\x98', '\x83', '\xe2']):
+            return word
         elif word=="love":
             return random.choice([self.dictionary[word], "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"])
         else:
@@ -282,6 +283,8 @@ class Translation:
         return filter(asdf, self.dictionary.values())
 
     def getpronounciation(self, word):
+        global VOWELS
+        global CONS
         global PROUNOUNCIATION
         global SUBS
         try:
@@ -289,19 +292,30 @@ class Translation:
                 word=self.getsentence(word)
         except:
             pass
+        word=unicode(word, 'utf-8')
         for item in SUBS:
             word=word.replace(SUBS[item], item)
-        for item in PROUNOUNCIATION:
-            word=word.replace(item, PROUNOUNCIATION[item]+"-")
+        newword=u""
+        for char in word:
+            if char in VOWELS:
+                newword+=PROUNOUNCIATION[char]+"-"
+            elif char in CONS:
+                newword+=PROUNOUNCIATION[char]
+            else:
+                newword+=char
         for item in SUBS:
-            word=word.replace(item, SUBS[item]+"-")
-        return word[:-1]
+            newword=newword.replace(item, SUBS[item])
+        for char in " !?-.,\n\t\"\'(){}[]/":
+            newword=newword.replace("-"+char, char)
+        if newword[-1]==u"-":
+            newword=newword[:-1]
+        return newword
     
 
     
         
 
 x=Translation()
-
+z="☃"
 print "Done"
 
