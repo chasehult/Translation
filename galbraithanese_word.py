@@ -145,7 +145,7 @@ def to_galbraithanese(word):
 
 class Translation:
     def __init__(self):
-        if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py").read():
+        if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/galbraithanese_word.py").read():
             i=raw_input("Your code is not up to date!\nWould you like to download the new one?\n(y/n)")
             if i=="y":
                 urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newcode.py")
