@@ -147,8 +147,49 @@ class Translation:
             if open("galbraithanese_word.py").read()!=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/galbraithanese_word.py").read():
                 i=raw_input("Your code is not up to date!\nWould you like to download the new one?\n(y/n)")
                 if i=="y":
-                    urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newcode.py")
-                    print "Your new code has been downloaded.  Just delete this code rename your Newcode.py to galbraithanese_word.py and run that."
+                    backup=open("galbraithanese_word.py").read()
+                    try:
+                        x=open("galbraithanese_word.py","r+")
+                        x.truncate(0)
+                        x.write(urllib2.urlopen("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py").read())
+                        x.close()
+                        print "Restart successful, please quit Python and reopen your file."
+                    except:
+                        warnings.warn("Update failed, will now try to revert to original.")
+                        try:
+                            x=open("galbraithanese_word.py","r+")
+                            x.truncate(0)
+                            x.write(backup)
+                            x.close()
+                            print "Reverted successfully.  Remember: It is still not updated, contact Chase or try again."
+                        except:
+                            warnings.warn("Reverted unsuccessfully.  Will now try to update on another file!")
+                            try:
+                                x=open("galbraithanese_word.py","r+")
+                                x.truncate(0)
+                                x.write("raise MemoryError(\"Corrupted File!\")")
+                                x.close()
+                            except:
+                                try:
+                                    x=open("galbraithanese_word.py","r+")
+                                    x.truncate(0)
+                                    x.close()
+                                except:
+                                    warnings.warn("Wow this file is really messed up!")
+                            try:
+                                urllib.urlretrieve("https://github.com/chasehult/Translation/blob/master/galbraithanese_word.py", "Newfile.py")
+                                print "Update sort of worked, delete this file and rename Newfile.py to galbraithanese_word.py"
+                            except:
+                                warnings.warn("Update on new file failed, now trying to backup on new file!")
+                                try:
+                                    n=open("Newfile.py", "w")
+                                    n.write(backup)
+                                    n.close()
+                                    print "Backup sort of worked, delete this file and rename Newfile.py to galbraithanese_word.py.   Remember: It is still not updated, contact Chase or try again."
+                                except:
+                                    warnings.warn("Nothing works, please contact Chase now.")
+                                    raise IOError("Error. "*12)
+                                   
         self.words=open("/usr/share/dict/words")
         try:
             self.trans=open("Translation.txt", "r+")
@@ -230,6 +271,8 @@ class Translation:
         try:
             return str(Numbers.from_galbraithanese(word))
         except:
+            if word in [self.dictionary["love"], "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"]:
+                return "love"
             for eng in self.dictionary:
                 if self.dictionary[eng]==word:
                     return eng
