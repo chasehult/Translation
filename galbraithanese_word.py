@@ -296,17 +296,12 @@ class Translation:
         for item in SUBS:
             word=word.replace(item, SUBS[item]+"-")
         return word[:-1]
-        
-           
-y=[]
+    
 
     
         
 
 x=Translation()
-def r():
-    return "dətês kwôsəbrāt. sāθên ûlêyīhə nʊkləd wôvōglēv jôʒóñ rîstûk wʊplûfr lûᵲʊyīʃ plêwʊv grēskōt ðūplēpr. grēskōt ðūplēpr māblóvôpl ówîblûwô dûzūm hāslākw ʊtʊkrīpʊmó plūtróʃ trāwēfīñ kófʊsl ᵲūrîsk, prēplîb plūtróʃ ówîblûwô grēskōt ðūplēpr. stûfûñ sāθên bājēsn ᵲʊslīw, kâzəθ nēkwūʒ ñûtāᵲōblūt ībûmū brôʧîp nēkwūʒ plêkwêsl. ēhēhʊskâtrʊtrōdūkūdâ dûzūm hāslākw ʊtʊkrīpʊmó ówîblûwô dûzūm trīləñên smīθókl ñīnâg nēkwūʒ ūmōsmə ûdâstôrûstî. grēskōt ðūplēpr prórōgr rîstûk lûᵲʊyīʃ plêwʊv! nēkwūʒ trîtrâplólôs ûlêyīhə īdʊwôslə vîᵲâr trīplēg tēwōsm blôʧûkēʧ. vîᵲâr ûlêyīhə ēstāsēsû kwôsəbrāt fīksôspībr hāslākw təgîg blâdûðâbl. ʊkwēblêñū ᵲâñîk ûlêyīhə hâᵲôbōfr trīplēg hāslākw həhâʒōy! jûglôkl kəyāʧ kwôsəbrāt skûzûbrīf ējôrâvô vîᵲâr? nēkwūʒ ârâblēsmô ûlêyīhə ūᵲūnēθāʃô kwôsəbrāt nāðīkôz nēkwūʒ sûslûnûn."
-z="☃"
 
 print "Done"
 
