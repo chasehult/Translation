@@ -359,6 +359,5 @@ class Translation:
         
 
 x=Translation()
-z="☃"
 print "Done"
 
