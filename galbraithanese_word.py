@@ -19,7 +19,7 @@ PROUNOUNCIATION={u"ā":"ay",u"â":"a",u"b":"b",u"d":"d",u"ē":"ee",u"ê":"e",
                  u"ə":"u",u"f":"f",u"g":"g",u"h":"h",u"ī":"iy",u"î":"i",
                  u"j":"j",u"ʒ":"zh",u"k":"k",u"l":"l",u"m":"m",u"n":"n",
                  u"ñ":"ny",u"ō":"oh",u"ô":"o",u"ó":"oo",u"p":"p",u"r":"r",
-                 u"ᵲ":"rr",u"s":"s",u"t":"t",u"ū":"yoo",u"û":"u",u"v":"v",
+                 u"ᵲ":"rr",u"s":"s",u"t":"t",u"ū":"oo",u"û":"u",u"v":"v",
                  u"w":"w",u"y":"yu",u"z":"z",u"ʧ":"ch",u"ʃ":"sh",u"θ":"th",
                  u"ð":"edh",u"ʊ":"eauh"}
 SUBS={u"":"sk",u"▀":"sl",u"▁":"sn",u"▂":"st",u"▃":"sp",u"▄":"sm",
@@ -31,8 +31,8 @@ CONS=u"bdfghjklmnprstvwyzʒᵲʧñʃθð"  # 26
 
 
 def to_galbraithanese(word):
-    VOWELS=u"āâēêəīîōôóūûʊ"
-    CONS=u"bdfghjklmnprstvwyzʒᵲʧñʃθð1234567890`!@#$%^~|"
+    global VOWELS
+    global CONS
     global SUBS
     try:
         word=unicode(word.lower())
@@ -87,12 +87,14 @@ def to_galbraithanese(word):
         
     for item in SUBS:
         word=word.replace(SUBS[item], item)
-
+        
+    addedvowels=""
+    addedcons=""
     for letter in word:
         if letter in VOWELS:
-            VOWELS+=letter*3
-        elif letter in CONS:
-            CONS+=letter*3
+            addedvowels+=letter*3
+        elif letter in CONS+"".join(list(SUBS)):
+            addedcons+=letter*3
         else:
             try:
                 warnings.warn(u"Unknown letter \'"+letter+"\'!")
@@ -126,9 +128,9 @@ def to_galbraithanese(word):
     output=""
     while length>0:
         if v:
-            output+=random.choice(VOWELS)
+            output+=random.choice(VOWELS+addedvowels)
         else:
-            output+=random.choice(CONS)
+            output+=random.choice(CONS+"".join(list(SUBS))+addedcons)
         length-=1
         v=not v
 
@@ -219,12 +221,31 @@ class Translation:
         elif set(list(word))==set(['\x98', '\x83', '\xe2']):
             return word
         elif word=="love":
-            return random.choice([self.dictionary[word], "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"])
+            return random.choice(["óstīðōyó", "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"])
+        elif word=="loved":
+            return random.choice(["óstīðōyóēnē", "ᵲōsnôfôbrēnē", "lēvēyēnē", "jūkwôbrēnē"])
+        elif word=="loving":
+            return random.choice(["óstīðōyóîgē", "ᵲōsnôfôbrîgē", "lēvēyîgē", "jūkwôbrîgē"])
+        elif word in self.dictionary:
+            return self.dictionary[word]
+        elif word[:-2] in self.dictionary and word[-2:]=="ly":
+            return self.dictionary[word[:-2]]+"əʃ"
+        elif word[:-3]+"y" in self.dictionary and word[-2:]=="ily":
+            return self.dictionary[word[:-3]+y]+"əʃ"
+        elif word[:-3] in self.dictionary and word[-3:]=="ing":
+            return self.dictionary[word[:-3]]+"îgē"
+        elif word[:-3]+"e" in self.dictionary and word[-3:]=="ing":
+            return self.dictionary[word[:-3]+"e"]+"îgē"
+        elif word[:-2] in self.dictionary and word[-2:]=="ed":
+            return self.dictionary[word[:-2]]+"ēnē"
+        elif word[:-1] in self.dictionary and word[-1]=="d":
+            return self.dictionary[word[:-1]]+"ēnē"
+        elif word[:-1] in self.dictionary and word[-1]=="s":
+            return self.dictionary[word[:-1]]+"glôb"
+        elif word[:-2] in self.dictionary and word[-2:]=="es":
+            return self.dictionary[word[:-2]]+"glôb"
         else:
-            try:
-                return self.dictionary[word]
-            except:
-                return "?"*len(word)
+            return "?"*len(word)
 
     def readfromdoc(self):
         self.dictionary={}
@@ -271,11 +292,33 @@ class Translation:
         try:
             return str(Numbers.from_galbraithanese(word))
         except:
-            if word in [self.dictionary["love"], "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"]:
-                return "love"
+            pass
+        if word in ["óstīðōyó", "ᵲōsnôfôbr", "lēvēy", "jūkwôbr"]:
+            return "love"
+        elif word in ["óstīðōyóēnē", "ᵲōsnôfôbrēnē", "lēvēyēnē", "jūkwôbrēnē"]:
+            return "loved"
+        elif word in ["óstīðōyóîgē", "ᵲōsnôfôbrîgē", "lēvēyîgē", "jūkwôbrîgē"]:
+            return "loving"
+        else:
             for eng in self.dictionary:
                 if self.dictionary[eng]==word:
                     return eng
+                elif self.dictionary[eng]==word[:-5] and word[-5:]=="ēnē":
+                    if eng[-1]=="e":
+                        return eng+"d"
+                    return eng+"ed"
+                elif self.dictionary[eng]==word[:-5] and word[-5:]=="îgē":
+                    if eng[-1]=="e":
+                        return eng[:-1]+"ing"
+                    return eng+"ing"
+                elif self.dictionary[eng]==word[:-4] and word[-4:]=="əʃ":
+                    if eng[-1]=="y":
+                        return eng[:-1]+"ily"
+                    return eng+"ly"
+                elif self.dictionary[eng]==word[:-5] and word[-5:]=="glôb":
+                    if eng[-1]=="s":
+                        return eng[:-1]+"es"
+                    return eng+"s"
             return "?"*len(word)
 
     def custom_trans(self, word, trans):
@@ -359,5 +402,6 @@ class Translation:
         
 
 x=Translation()
+tr="tûñâfr dûzūm hēgâgós. jûglôkl sāθên îfrʊfî nēkwūʒ mīklʊy, kəyāʧ sāθên ðêdêtr prīfrēg tîkl skəjəsk? ᵲʊslīw dûzūm vôθôglətr!"
 print "Done"
 
