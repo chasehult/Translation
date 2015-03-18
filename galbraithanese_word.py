@@ -363,11 +363,6 @@ class Translation:
             newspl[index]+=punctdictionary[index]
         return " ".join(newspl)
 
-    def gethomophones(self):
-        global y
-        y=list(set(self.dictionary.values()))
-        return filter(asdf, self.dictionary.values())
-
     def getpronounciation(self, word):
         global VOWELS
         global CONS
