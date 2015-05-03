@@ -201,21 +201,41 @@ class Translation:
         self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
         self.dictionary={}
         try:
-            self.readfromdoc()
+            try:
+                open("ignore.txt")
+                self.readfromfile()
+            except:
+                if self.trans.read()!=self.trans2.read():
+                    self.trans.close()
+                    self.trans=open("Translation.txt", "r+")
+                    self.trans2.close()
+                    self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
+                    x=raw_input("Your translation document is different than the one on the web.  Would you like to read from the online one?  (y/n)")
+                    if x=="y":
+                        self.readfromdoc()
+                    else:
+                        self.readfromfile()
+                self.trans.close()
+                self.trans=open("Translation.txt", "r+")
+                self.trans2.close()
+                self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
         except ValueError:
             warnings.warn("Could not read from doc!")
-            for word in map(lambda x: x[:-1], self.trans.readlines()):
-                try:
-                    self.dictionary[word.split("-")[0]]=word.split("-")[1]
-                except:
-                    pass
+            self.readfromfile()
+        self.trans.close()
+        self.trans=open("Translation.txt", "r+")
+        self.trans2.close()
+        self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
+
 
 
     
     def printword(self,word):
+        """Exactly the same as getword, but prints the word instead of returning it."""
         print self.getword(word)
         
     def getword(self, word):
+        """Translates one word into Galbraithanese."""
         if all(map(lambda x: x.isdigit(), list(word))) and word:
             return Numbers.galbraithanese_number(int(word))
         elif set(list(word))==set(['\x98', '\x83', '\xe2']):
@@ -248,21 +268,37 @@ class Translation:
             return "?"*len(word)
 
     def readfromdoc(self):
+        """Forces the program to read off of the online translation."""
         self.dictionary={}
         for word in self.trans2.read().split("#######")[1].split():
             try:
                 self.dictionary[word.split("-")[0]]=word.split("-")[1]
             except:
                 pass
+        self.trans2.close()
         self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
 
+    def readfromfile(self):
+        """Forces the program to read off of your translation file."""
+        self.dictionary={}
+        for word in self.trans.read().split("#######")[1].split():
+            try:
+                self.dictionary[word.split("-")[0]]=word.split("-")[1]
+            except:
+                pass
+        self.trans.close()
+        self.trans=open("Translation.txt", "r+")
+    
     def addword(self,word):
+        """Adds a single english word to the dictionary and its translation is randomly chosen through to_galbraithanese."""
         self.dictionary[word]=to_galbraithanese(word)
 
     def removeword(self,word):
+        """Removes a single word from the dictionary, the input word must be in english."""
         self.dictionary.pop(word)
 
     def restart(self):
+        """Completely restarts and saves the translation file.  Every thing will be changed.  Also makes sure there are no homonyms.  ASK CHASE BEFORE USING!!"""
         self.trans.truncate(0)
         self.trans.write("#######\n")
         self.dictionary={}
@@ -280,6 +316,7 @@ class Translation:
         self.words=open("/usr/share/dict/words")
 
     def save(self):
+        """Saves the current dictionary to the translation file."""
         self.trans.truncate(0)
         self.trans.write("#######\n")
         for word in self.dictionary:
@@ -289,6 +326,7 @@ class Translation:
         self.trans=open("Translation.txt", "r+")
         
     def gettranslation(self, word):
+        """Translates a single galbraithanese word into english."""
         try:
             return str(Numbers.from_galbraithanese(word))
         except:
@@ -323,6 +361,7 @@ class Translation:
 
 
     def fulltranslate(self, sentence):
+        """Fully and correctly translates an english word into galbraithanese.  Warning:  Incomplete."""
         def trymost(word):
             try:
                 return gettranslation(word)
@@ -425,18 +464,22 @@ class Translation:
                 word=word[:-3]
             else:
                 person=4
-            perstr=[None, "we", "y'all", "they", "everyone"][person] if plu else: [None, "I", "you", "they", "anyone"][person]
+            perstr=[None, "we", "y'all", "they", "everyone"][person] if plu else [None, "I", "you", "they", "anyone"][person]
             try:
                 ver=self.gettranslation(word)
+            except:
+                pass
             
                 
             
             
     
     def custom_trans(self, word, trans):
+        """Adds one english word to the dictionary with its specific galbraithanese translation."""
         self.dictionary[word]=trans
 
     def getsentencetranslation(self,sentence):
+        """Translates a large chunk of galbraithanese into english."""
         newsentence=""
         for letter in sentence.lower():
             if letter not in ",?.!:;":
@@ -447,9 +490,11 @@ class Translation:
         return self.keeppunct(sentence, " ".join(output))
 
     def printsentence(self,sentence):
+        """Exactly the same as getsentence but prints the output."""
         print self.getsentence(sentence)
 
     def getsentence(self,sentence):
+        """Translates a large chunk of english into galbraithanese."""
         newsentence=""
         sentence=sentence.replace("unicode snowman", "☃")
         sentence=sentence.replace("unicode snowmen", "☃☃☃")
@@ -465,6 +510,7 @@ class Translation:
             return " ".join(output)
 
     def keeppunct(self, old, new):
+        """Keeps puncutation of a translated string.  Not really useful to use alone.  Is used in code."""
         punctdictionary={}
         oldspl=old.split()
         for x in range(len(oldspl)):
@@ -476,6 +522,7 @@ class Translation:
         return " ".join(newspl)
 
     def getpronounciation(self, word):
+        """Gives you the pronouciation of a sentence."""
         global VOWELS
         global CONS
         global PROUNOUNCIATION
@@ -505,6 +552,7 @@ class Translation:
         return newword
 
     def fullsentence(self, sentence):
+        """Fully translates a sentence by asking a lot of questions.  Warning:  Not thoroughly tested."""
         def askquestion(question, answers):
             newanswers=""
             for x in range(len(answers)):
@@ -645,23 +693,17 @@ class Translation:
             if lastisto:
                 output.insert(len(output)-1, self.getword("to"))
         return " ".join(output)
-                
-                
-                    
-                
-    
-                
+
+    def rhyme(self, word):
+        """Gets all rhymes of a word.  Warning:  Each word has a lot of rhymes so this code might overload your idle interpreter."""
+        if word in self.dictionary: word=self.getword(word)
+        return filter(lambda x: x[-2:]==word[-2:], self.dictionary.values())
         
                 
         
 
-r="əʃ"
-    
-# ksīʧūmópópûb tîkl plərôðó tîkl klûʃîmēsp tîkl klênōkrīθ tîkl slētróᵲūbr = I like to play games with people
-    
-        
-
+r="gâlbrāθənēz"
 x=Translation()
-tr="tûñâfr dûzūm hēgâgós. jûglôkl sāθên îfrʊfî nēkwūʒ mīklʊy, kəyāʧ sāθên ðêdêtr prīfrēg tîkl skəjəsk? ᵲʊslīw dûzūm vôθôglətr!"
+tr="dətês vîᵲâr, jôʒóñ dûzūm prīfrēg ēgʊkʊ? sótəy ðūplēpr tēwōsm tôpləbr ksūʒūsl wêplîd lūzôgāg. grēskōt ʊdîkrū trôhîθōsnîh hāslākw bróʃîzīkl ksūʒūsl hāslākw yʊglūgēʃîgē klāʃódâʃūr. tûñâfr âwâzōbī, grēskōt ʊdîkrū kwəsnīblîr hêyôklāy ñīnâg Gâlbrāθənēz."
 print "Done"
 
