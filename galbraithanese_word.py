@@ -697,10 +697,11 @@ class Translation:
                 output.insert(len(output)-1, self.getword("to"))
         return " ".join(output)
 
-    def rhyme(self, word):
+    def rhyme(self, word, upto=6):
         """Gets all rhymes of a word.  Warning:  Each word has a lot of rhymes so this code might overload your idle interpreter."""
+        upto=min(len(word), upto)
         if word in self.dictionary: word=self.getword(word)
-        return filter(lambda x: x[-2:]==word[-2:], self.dictionary.values())
+        return filter(lambda x: x[-upto:]==word[-upto:], self.dictionary.values())
         
                 
         
