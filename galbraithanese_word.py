@@ -362,7 +362,6 @@ class Translation:
                     return eng+"s"
             return "?"*len(word)
 
-<<<<<<< HEAD
 
     def fulltranslate(self, sentence):
         """Fully and correctly translates an english word into galbraithanese.  Warning:  Incomplete."""
@@ -478,8 +477,6 @@ class Translation:
             
             
     
-=======
->>>>>>> parent of 6a78f5c... asdf
     def custom_trans(self, word, trans):
         """Adds one english word to the dictionary with its specific galbraithanese translation."""
         self.dictionary[word]=trans
@@ -556,7 +553,6 @@ class Translation:
         if newword[-1]==u"-":
             newword=newword[:-1]
         return newword
-<<<<<<< HEAD
 
     def fullsentence(self, sentence):
         """Fully translates a sentence by asking a lot of questions.  Warning:  Not thoroughly tested."""
@@ -710,13 +706,6 @@ class Translation:
         
 
 r="gâlbrāθənēz"
-=======
-    
-
-    
-        
-
->>>>>>> parent of 6a78f5c... asdf
 x=Translation()
 tr="dətês vîᵲâr, jôʒóñ dûzūm prīfrēg ēgʊkʊ? sótəy ðūplēpr tēwōsm tôpləbr ksūʒūsl wêplîd lūzôgāg. grēskōt ʊdîkrū trôhîθōsnîh hāslākw bróʃîzīkl ksūʒūsl hāslākw yʊglūgēʃîgē klāʃódâʃūr. tûñâfr âwâzōbī, grēskōt ʊdîkrū kwəsnīblîr hêyôklāy ñīnâg Gâlbrāθənēz."
 print "Done"
