@@ -16,12 +16,12 @@ present="\x68\x74\x74\x70\x3A\x2F\x2F\x75\x6E\x69\x63\x6F\x64\x65\x73\x6E\x6F\x7
 
 
 PROUNOUNCIATION={u"ā":"ay",u"â":"a",u"b":"b",u"d":"d",u"ē":"ee",u"ê":"e",
-                 u"ə":"u",u"f":"f",u"g":"g",u"h":"h",u"ī":"iy",u"î":"i",
+                 u"ə":"u",u"f":"f",u"g":"g",u"h":"h",u"ī":"ie",u"î":"i",
                  u"j":"j",u"ʒ":"zh",u"k":"k",u"l":"l",u"m":"m",u"n":"n",
                  u"ñ":"ny",u"ō":"oh",u"ô":"o",u"ó":"oo",u"p":"p",u"r":"r",
                  u"ᵲ":"rr",u"s":"s",u"t":"t",u"ū":"oo",u"û":"u",u"v":"v",
-                 u"w":"w",u"y":"yu",u"z":"z",u"ʧ":"ch",u"ʃ":"sh",u"θ":"th",
-                 u"ð":"edh",u"ʊ":"eauh"}
+                 u"w":"w",u"y":"y",u"z":"z",u"ʧ":"ch",u"ʃ":"sh",u"θ":"th",
+                 u"ð":"vth",u"ʊ":"uh"}
 SUBS={u"":"sk",u"▀":"sl",u"▁":"sn",u"▂":"st",u"▃":"sp",u"▄":"sm",
           u"▅":"bl",u"▇":"kl",u"█":"br",u"▉":"fr",u"▊":"kr",u"▋":"gl",
           u"▌":u"pl",u"▍":"gr",u"▎":"tr",u"▏":"pr",u"▐":"kw",u"▓":"ks"}                
@@ -552,6 +552,7 @@ class Translation:
             newword=newword.replace("-"+char, char)
         if newword[-1]==u"-":
             newword=newword[:-1]
+        newword=" ".join(map(lambda x: x[::-1].replace("-", "", 1)[::-1],newword.split()))
         return newword
 
     def fullsentence(self, sentence):
@@ -697,14 +698,32 @@ class Translation:
                 output.insert(len(output)-1, self.getword("to"))
         return " ".join(output)
 
-    def rhyme(self, word, upto=6):
+    def rhyme(self, word, upto=3):
         """Gets all rhymes of a word.  Warning:  Each word has a lot of rhymes so this code might overload your idle interpreter."""
-        upto=min(len(word), upto)
         if word in self.dictionary: word=self.getword(word)
-        return filter(lambda x: x[-upto:]==word[-upto:], self.dictionary.values())
-        
-                
-        
+        upto=min(len(word.decode('utf-8', 'ignore')), upto)
+        return filter(lambda x: x.decode('utf-8', 'ignore')[-upto:]==word.decode('utf-8', 'ignore')[-upto:] and x!=word, self.dictionary.values())
+
+    def printrhyme(self, word, upto=3):
+        """Exactly the same as rhyme, but prints the words."""
+        y=self.getword(word) if word in self.dictionary else word
+        print y+"\n------------\n"+"\n".join(self.rhyme(word, upto))
+
+    def pronouncerhymes(self, word, upto=3):
+        """Exactly the same as printrhyme, but prints pronounciation of the rhyme."""
+        y=self.getword(word) if word in self.dictionary else word
+        print self.getpronounciation(y)+"\n------------\n"+"\n".join(map(self.getpronounciation, self.rhyme(word, upto)))              
+
+    def englishrhyme(self, word, upto=3):
+        """Same as rhyme, except translates to english"""
+        return map(self.gettranslation, self.rhyme(word, upto))
+
+    def printenglishrhyme(self, word, upto=3):
+        """Exactly the same as englishrhyme, but prints the words."""
+        y=word if word in self.dictionary else self.gettranslation(word)
+        print y+"\n------------\n"+"\n".join(self.englishrhyme(word, upto))
+    
+
 
 r="gâlbrāθənēz"
 x=Translation()
