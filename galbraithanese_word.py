@@ -213,6 +213,9 @@ class Translation:
                     x=raw_input("Your translation document is different than the one on the web.  Would you like to read from the online one?  (y/n)")
                     if x=="y":
                         self.readfromdoc()
+                        x=raw_input("Would you like to update your translation file?")
+                        if x=="y":
+                            self.save()
                     else:
                         self.readfromfile()
                 self.trans.close()
