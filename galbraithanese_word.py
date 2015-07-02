@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
-print "Loading..."
 import sys
 import warnings
 import random
 import urllib2
 import urllib
+try:
+    alert=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Alert.txt")
+    print alert.read()
+except:
+    pass
+print "Loading..."
 try:
     import Numbers
 except:
