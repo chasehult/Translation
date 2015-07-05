@@ -223,6 +223,8 @@ class Translation:
                             self.save()
                     else:
                         self.readfromfile()
+                else:
+                    self.readfromfile()
                 self.trans.close()
                 self.trans=open("Translation.txt", "r+")
                 self.trans2.close()
@@ -234,7 +236,6 @@ class Translation:
         self.trans=open("Translation.txt", "r+")
         self.trans2.close()
         self.trans2=urllib2.urlopen("https://raw.githubusercontent.com/chasehult/Translation/master/Translation.txt")
-
 
 
     
@@ -727,11 +728,13 @@ class Translation:
         """Exactly the same as englishrhyme, but prints the words."""
         y=word if word in self.dictionary else self.gettranslation(word)
         print y+"\n------------\n"+"\n".join(self.englishrhyme(word, upto))
-    
+
+    def guide(self):
+        for x in ['addword', 'custom_trans', 'englishrhyme', 'fullsentence', 'fulltranslate', 'getpronounciation', 'getsentence', 'getsentencetranslation', 'gettranslation', 'getword', 'keeppunct', 'printenglishrhyme', 'printrhyme', 'printsentence', 'printword', 'pronouncerhymes', 'readfromdoc', 'readfromfile', 'removeword', 'restart', 'rhyme', 'save']:
+            print "x."+x+"\n------------\n"+max("",getattr(self, x).__doc__)+"\n"
 
 
 r="gâlbrāθənēz"
 x=Translation()
 tr="dətês vîᵲâr, jôʒóñ dûzūm prīfrēg ēgʊkʊ? sótəy ðūplēpr tēwōsm tôpləbr ksūʒūsl wêplîd lūzôgāg. grēskōt ʊdîkrū trôhîθōsnîh hāslākw bróʃîzīkl ksūʒūsl hāslākw yʊglūgēʃîgē klāʃódâʃūr. tûñâfr âwâzōbī, grēskōt ʊdîkrū kwəsnīblîr hêyôklāy ñīnâg Gâlbrāθənēz."
 print "Done"
-
