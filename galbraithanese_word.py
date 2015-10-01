@@ -279,7 +279,7 @@ class Translation:
     def readfromdoc(self):
         """Forces the program to read off of the online translation."""
         self.dictionary={}
-        for word in self.trans2.read().split("#######")[1].split():
+        for word in self.trans2.read().split():
             try:
                 self.dictionary[word.split("-")[0]]=word.split("-")[1]
             except:
@@ -290,7 +290,7 @@ class Translation:
     def readfromfile(self):
         """Forces the program to read off of your translation file."""
         self.dictionary={}
-        for word in self.trans.read().split("#######")[1].split():
+        for word in self.trans.read().split():
             try:
                 self.dictionary[word.split("-")[0]]=word.split("-")[1]
             except:
@@ -309,7 +309,6 @@ class Translation:
     def restart(self):
         """Completely restarts and saves the translation file.  Every thing will be changed.  Also makes sure there are no homonyms.  ASK CHASE BEFORE USING!!"""
         self.trans.truncate(0)
-        self.trans.write("#######\n")
         self.dictionary={}
         for word in list(set(self.words.read().lower().split("\n"))):
             translation=to_galbraithanese(word)
@@ -319,7 +318,6 @@ class Translation:
             self.dictionary[word]=translation
             if len(list(self.dictionary))%1000==0:
                 print str(len(list(self.dictionary)))+"/"+str(len(open("/usr/share/dict/words").readlines()))
-        self.trans.write("#######")
         self.trans.close()
         self.trans=open("Translation.txt", "r+")
         self.words=open("/usr/share/dict/words")
